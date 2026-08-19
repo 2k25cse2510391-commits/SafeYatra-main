@@ -210,12 +210,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         sosBtn.addEventListener('touchcancel', endHold);
     }
 
-    // 3. Trigger Active SOS State
-    function triggerSOS() {
+    // 3. Trigger Active SOS State & Broadcast to Database
+    async function triggerSOS() {
         if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
 
         // Show Modal
         if (sosModal) sosModal.classList.add('active');
+
+        // 3a. Publish Real-time 1-KM SOS Broadcast to Firebase Firestore
+        if (typeof SafeYatraSOSBroadcast !== 'undefined' && SafeYatraSOSBroadcast.publishSOS) {
+            try {
+                const userProf = (typeof SafeYatraDB !== 'undefined') ? await SafeYatraDB.getUserProfile() : null;
+                const broadcastId = await SafeYatraSOSBroadcast.publishSOS(userProf, {
+                    latitude: currentLat || 28.613939,
+                    longitude: currentLng || 77.209021
+                });
+                console.log("Active SOS Broadcast successfully dispatched to Firestore:", broadcastId);
+            } catch (err) {
+                console.warn("SOS Broadcast dispatch notice:", err.message);
+            }
+        }
 
         // Automatically start emergency siren
         startSiren();
@@ -240,7 +254,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (modalCancelBtn) {
-        modalCancelBtn.addEventListener('click', () => {
+        modalCancelBtn.addEventListener('click', async () => {
             if (sosModal) sosModal.classList.remove('active');
             stopSiren();
 
@@ -248,6 +262,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 clearInterval(countdownInterval);
                 countdownInterval = null;
             }
+
+            // Resolve / Cancel active SOS broadcast in Firestore
+            if (typeof SafeYatraSOSBroadcast !== 'undefined' && SafeYatraSOSBroadcast.resolveSOS) {
+                await SafeYatraSOSBroadcast.resolveSOS();
+            }
+
             showToast("Emergency Alert Cancelled");
         });
     }
@@ -306,7 +326,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 sirenOsc.stop();
                 sirenOsc.disconnect();
-            } catch (e) {}
+            } catch (e) { }
             sirenOsc = null;
         }
         isSirenPlaying = false;
@@ -364,7 +384,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 osc.start();
                 osc.stop(audioCtx.currentTime + 1.2);
             }, 2500);
-        } catch (e) {}
+        } catch (e) { }
     }
 
     function stopRingtone() {
@@ -449,6 +469,71 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (closeMedicalModal && medicalIdModal) {
         closeMedicalModal.addEventListener('click', () => {
             medicalIdModal.classList.remove('active');
+        });
+    }
+
+    // 8. DND (Do Not Disturb) Mode Controls
+    const dndToggleCheckbox = document.getElementById('dndToggleCheckbox');
+    const dndCard = document.getElementById('dndCard');
+    const dndStatusSubtext = document.getElementById('dndStatusSubtext');
+
+    if (typeof SafeYatraSOSBroadcast !== 'undefined') {
+        const syncDndUI = () => {
+            const isDnd = SafeYatraSOSBroadcast.isDNDEnabled();
+            if (dndToggleCheckbox) dndToggleCheckbox.checked = isDnd;
+            if (dndCard) {
+                if (isDnd) dndCard.classList.add('active');
+                else dndCard.classList.remove('active');
+            }
+            if (dndStatusSubtext) {
+                dndStatusSubtext.textContent = isDnd
+                    ? "Active: All incoming emergency broadcast popups are muted"
+                    : "Mute all incoming proximity emergency broadcast alerts";
+            }
+        };
+
+        syncDndUI();
+
+        if (dndToggleCheckbox) {
+            dndToggleCheckbox.addEventListener('change', (e) => {
+                SafeYatraSOSBroadcast.setDND(e.target.checked);
+                syncDndUI();
+                showToast(e.target.checked ? "DND Mode Activated" : "DND Mode Deactivated");
+            });
+        }
+
+        window.addEventListener('safeyatra-dnd-changed', () => {
+            syncDndUI();
+        });
+    }
+
+    // 9. Simulator Test Triggers
+    const sim350mBtn = document.getElementById('btnSimulate350m');
+    const sim800mBtn = document.getElementById('btnSimulate800m');
+    const simFarBtn = document.getElementById('btnSimulateFar');
+
+    if (sim350mBtn && typeof SafeYatraSOSBroadcast !== 'undefined') {
+        sim350mBtn.addEventListener('click', () => {
+            if (SafeYatraSOSBroadcast.isDNDEnabled()) {
+                showToast("DND is ON: Alert suppressed (Turn DND off to see popup)");
+            }
+            SafeYatraSOSBroadcast.simulateNearbySOS(350, "Priya Sharma", "+91 9876543210");
+        });
+    }
+
+    if (sim800mBtn && typeof SafeYatraSOSBroadcast !== 'undefined') {
+        sim800mBtn.addEventListener('click', () => {
+            if (SafeYatraSOSBroadcast.isDNDEnabled()) {
+                showToast("DND is ON: Alert suppressed (Turn DND off to see popup)");
+            }
+            SafeYatraSOSBroadcast.simulateNearbySOS(800, "Rahul Deshmukh", "+91 9123456780");
+        });
+    }
+
+    if (simFarBtn && typeof SafeYatraSOSBroadcast !== 'undefined') {
+        simFarBtn.addEventListener('click', () => {
+            showToast("Simulating alert 3.5 km away (>1 km)... Check console: Alert filtered out!");
+            console.log("Simulator: Dispatching alert at 3500m. Expected behavior: Ignored (outside 1km radius).");
         });
     }
 

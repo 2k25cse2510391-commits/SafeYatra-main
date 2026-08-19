@@ -1,0 +1,544 @@
+/* ==========================================================================
+   TravelSathi - Proximity SOS Broadcast & 1-KM Helper Alert Styles
+   ========================================================================== */
+
+/* 1. Global Proximity Alert Modal Overlay */
+.proximity-sos-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.proximity-sos-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 2. Emergency Modal Card */
+.proximity-sos-card {
+    background: linear-gradient(165deg, #1E1B24 0%, #121016 100%);
+    border: 2px solid rgba(239, 68, 68, 0.7);
+    box-shadow: 0 0 45px rgba(239, 68, 68, 0.4), 0 20px 40px rgba(0, 0, 0, 0.7);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 440px;
+    color: #FFFFFF;
+    overflow: hidden;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: alertCardPulse 2s infinite ease-in-out;
+}
+
+.proximity-sos-overlay.active .proximity-sos-card {
+    transform: scale(1) translateY(0);
+}
+
+@keyframes alertCardPulse {
+
+    0%,
+    100% {
+        border-color: rgba(239, 68, 68, 0.7);
+        box-shadow: 0 0 35px rgba(239, 68, 68, 0.35), 0 20px 40px rgba(0, 0, 0, 0.7);
+    }
+
+    50% {
+        border-color: rgba(248, 113, 113, 1);
+        box-shadow: 0 0 55px rgba(239, 68, 68, 0.65), 0 20px 40px rgba(0, 0, 0, 0.8);
+    }
+}
+
+/* 3. Header Banner */
+.proximity-sos-header {
+    background: linear-gradient(90deg, #DC2626 0%, #991B1B 100%);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.proximity-sos-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.proximity-beacon-icon {
+    width: 38px;
+    height: 38px;
+    background: #FFFFFF;
+    color: #DC2626;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    animation: beaconFlash 1s infinite alternate;
+}
+
+@keyframes beaconFlash {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: scale(1.1);
+        opacity: 1;
+        box-shadow: 0 0 15px #FFFFFF;
+    }
+}
+
+.proximity-sos-header h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+}
+
+.proximity-sos-header p {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: rgba(254, 202, 202, 0.95);
+    font-weight: 600;
+}
+
+.proximity-sos-close-btn {
+    background: rgba(0, 0, 0, 0.25);
+    border: none;
+    color: #FFFFFF;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.proximity-sos-close-btn:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* 4. Body Content */
+.proximity-sos-body {
+    padding: 22px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Distance Pill Highlight */
+.proximity-distance-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1.5px solid rgba(239, 68, 68, 0.4);
+    border-radius: 999px;
+    color: #FCA5A5;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.proximity-distance-pill i {
+    color: #EF4444;
+    font-size: 16px;
+    animation: bounce 1.5s infinite;
+}
+
+/* Endangered Person Info Box */
+.victim-info-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.victim-info-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.victim-avatar-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #FFFFFF;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+
+.victim-text-details {
+    flex: 1;
+    overflow: hidden;
+}
+
+.victim-label-tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: #94A3B8;
+    font-weight: 700;
+}
+
+.victim-name-text {
+    margin: 2px 0 0;
+    font-size: 19px;
+    font-weight: 800;
+    color: #F8FAFC;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.victim-phone-text {
+    margin: 2px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #38BDF8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.victim-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 12px;
+    color: #94A3B8;
+}
+
+.victim-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.victim-meta-item strong {
+    color: #E2E8F0;
+}
+
+/* 5. Action Buttons */
+.proximity-sos-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-sos-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 13px 18px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.btn-sos-action:active {
+    transform: scale(0.98);
+}
+
+.btn-sos-call {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+}
+
+.btn-sos-call:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+}
+
+.btn-sos-maps {
+    background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+}
+
+.btn-sos-maps:hover {
+    background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+}
+
+.proximity-action-split-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.btn-sos-accept {
+    background: rgba(34, 197, 94, 0.2);
+    border: 1.5px solid rgba(34, 197, 94, 0.5);
+    color: #4ADE80;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-sos-accept:hover {
+    background: rgba(34, 197, 94, 0.35);
+    color: #FFFFFF;
+}
+
+.btn-sos-reject {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1.5px solid rgba(239, 68, 68, 0.4);
+    color: #F87171;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-sos-reject:hover {
+    background: rgba(239, 68, 68, 0.3);
+    color: #FFFFFF;
+}
+
+.blacklist-note-text {
+    font-size: 11px;
+    text-align: center;
+    color: #94A3B8;
+    margin: 0;
+}
+
+/* 6. DND Card Component (on SOS Page) */
+.dnd-card {
+    background: #FFFFFF;
+    border-radius: 18px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    border: 1.5px solid #E2E8F0;
+    transition: all 0.3s ease;
+}
+
+.dnd-card.active {
+    background: #FFF7ED;
+    border-color: #FDBA74;
+    box-shadow: 0 4px 20px rgba(249, 115, 22, 0.15);
+}
+
+.dnd-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.dnd-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #F1F5F9;
+    color: #64748B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.3s ease;
+}
+
+.dnd-card.active .dnd-icon-box {
+    background: #FFEDD5;
+    color: #EA580C;
+}
+
+.dnd-text-wrap h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1E293B;
+}
+
+.dnd-text-wrap p {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: #64748B;
+}
+
+/* Switch Toggle UI */
+.dnd-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.dnd-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.dnd-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #CBD5E1;
+    transition: .3s;
+    border-radius: 34px;
+}
+
+.dnd-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dnd-toggle-switch input:checked+.dnd-toggle-slider {
+    background-color: #EA580C;
+}
+
+.dnd-toggle-switch input:checked+.dnd-toggle-slider:before {
+    transform: translateX(22px);
+}
+
+/* 7. Simulator Card on SOS page for Easy Testing */
+.sos-simulator-card {
+    background: #F8FAFC;
+    border: 1.5px dashed #CBD5E1;
+    border-radius: 18px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+}
+
+.sos-simulator-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.sos-simulator-header h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.simulator-btn-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.btn-simulate {
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid #CBD5E1;
+    background: #FFFFFF;
+    color: #334155;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-simulate:hover {
+    background: #F1F5F9;
+    border-color: #94A3B8;
+}
+
+.btn-simulate.in-range {
+    border-color: #FCA5A5;
+    color: #DC2626;
+}
+
+.btn-simulate.in-range:hover {
+    background: #FEF2F2;
+}
+
+/* Floating DND Status Pill when DND is active across pages */
+.dnd-status-toast {
+    position: fixed;
+    top: 68px;
+    right: 16px;
+    background: #1E293B;
+    color: #FDBA74;
+    border: 1px solid #EA580C;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 800;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.3s ease;
+}

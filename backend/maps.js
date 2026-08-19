@@ -25,16 +25,34 @@ document.addEventListener("DOMContentLoaded", () => {
     setupSearch();
     setupCurrentLocationBtn();
 
-    // Check URL parameters for emergency request (e.g. ?destination=police)
+    // Check URL parameters for emergency request (e.g. ?destination=police or ?targetLat=...&targetLng=...)
     const urlParams = new URLSearchParams(window.location.search);
     const destinationParam = urlParams.get("destination");
+    const targetLat = urlParams.get("targetLat");
+    const targetLng = urlParams.get("targetLng");
+    const targetName = urlParams.get("name") || "Endangered Person";
 
     if (destinationParam && destinationParam.toLowerCase() === "police") {
         handleEmergencyDestination("police");
+    } else if (targetLat && targetLng) {
+        handleSosDestination(parseFloat(targetLat), parseFloat(targetLng), targetName);
     } else {
         getCurrentLocation();
     }
 });
+
+function handleSosDestination(lat, lng, name) {
+    if (!map) return;
+    map.setView([lat, lng], 17);
+    const sosMarker = L.circleMarker([lat, lng], {
+        radius: 14,
+        color: "#DC2626",
+        weight: 4,
+        fillColor: "#EF4444",
+        fillOpacity: 0.9
+    }).addTo(map);
+    sosMarker.bindPopup(`<strong>🚨 EMERGENCY SOS: ${name}</strong><br>Coordinates: ${lat.toFixed(5)}, ${lng.toFixed(5)}<br><a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank" style="color:#2563EB; font-weight:700;">Open Turn-by-Turn Navigation</a>`).openPopup();
+}
 
 function initializeMap() {
     const mapContainer = document.getElementById("map");

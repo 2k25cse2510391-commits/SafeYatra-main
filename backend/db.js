@@ -152,7 +152,7 @@ const SafeYatraDB = {
             try {
                 const parsed = JSON.parse(localCache);
                 if (parsed && parsed.name) return { exists: true, data: parsed };
-            } catch (e) {}
+            } catch (e) { }
         }
 
         return { exists: false, data: null };
@@ -186,7 +186,7 @@ const SafeYatraDB = {
         if (localCache) {
             try {
                 return { ...defaultProf, ...JSON.parse(localCache) };
-            } catch (e) {}
+            } catch (e) { }
         }
 
         return defaultProf;
@@ -234,7 +234,7 @@ const SafeYatraDB = {
         if (window.firebase && window.firebase.auth) {
             try {
                 firebase.auth().signOut();
-            } catch (e) {}
+            } catch (e) { }
         }
         window.location.href = "login.html";
     }

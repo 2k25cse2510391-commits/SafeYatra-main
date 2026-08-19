@@ -460,9 +460,9 @@ main.sos-main-content {
     margin-bottom: 8px;
 }
 
-/* .toolkit-icon.red { background: #FEE2E2; color: #DC2626; } */
+.toolkit-icon.red { background: #FEE2E2; color: #DC2626; }
 .toolkit-icon.purple { background: #F3E8FF; color: #9333EA; }
-/* .toolkit-icon.blue { background: #DBEAFE; color: #2563EB; } */
+.toolkit-icon.blue { background: #DBEAFE; color: #2563EB; }
 .toolkit-icon.green { background: #DCFCE7; color: #16A34A; }
 
 .toolkit-card span {

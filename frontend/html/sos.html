@@ -27,6 +27,7 @@
     <link rel="apple-touch-icon" href="../../assests/apple-touch-icon.png">
 
     <link rel="stylesheet" href="../css/sos.css">
+    <link rel="stylesheet" href="../css/sos-broadcast.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://kit.fontawesome.com/4636c07b63.js"></script>
@@ -74,8 +75,9 @@
                     </button>
                 </div>
 
-                <h2>Emergency SOS</h2>
-                <p>Press and hold for 3 seconds to dispatch immediate emergency alerts with your live location.</p>
+                <h2>Emergency SOS Hub</h2>
+                <p>Press and hold for 3 seconds to dispatch immediate emergency alerts with your live location to nearby
+                    helpers (1 KM radius).</p>
 
                 <!-- Live Geolocation Coordinates Badge -->
                 <div class="live-location-badge">
@@ -85,6 +87,49 @@
                     </div>
                     <span id="coordsText" class="coords-text">Fetching...</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- DND (Do Not Disturb) Mode Card -->
+        <div id="dndCard" class="dnd-card">
+            <div class="dnd-info">
+                <div class="dnd-icon-box">
+                    <i class="fa-solid fa-bell-slash"></i>
+                </div>
+                <div class="dnd-text-wrap">
+                    <h4>Do Not Disturb (DND)</h4>
+                    <p id="dndStatusSubtext">Mute all incoming proximity emergency broadcast alerts</p>
+                </div>
+            </div>
+            <label class="dnd-toggle-switch" title="Toggle Do Not Disturb Mode">
+                <input type="checkbox" id="dndToggleCheckbox">
+                <span class="dnd-toggle-slider"></span>
+            </label>
+        </div>
+
+        <!-- 1-KM Proximity Broadcast Testing Simulator Card -->
+        <div class="sos-simulator-card">
+            <div class="sos-simulator-header">
+                <h4><i class="fa-solid fa-vial-circle-check" style="color:#2563EB;"></i> 1-KM Radius SOS Simulator</h4>
+                <span style="font-size:11px; color:#64748B; font-weight:700;">TEST TOOL</span>
+            </div>
+            <div class="simulator-btn-grid">
+                <button type="button" id="btnSimulate350m" class="btn-simulate in-range"
+                    title="Test receiving SOS alert 350m away">
+                    <i class="fa-solid fa-person-circle-exclamation"></i> Test 350m (Alert)
+                </button>
+                <button type="button" id="btnSimulate800m" class="btn-simulate in-range"
+                    title="Test receiving SOS alert 800m away">
+                    <i class="fa-solid fa-bullhorn"></i> Test 800m (Alert)
+                </button>
+                <button type="button" id="btnSimulateFar" class="btn-simulate"
+                    title="Test SOS alert 3.5km away (Should be filtered out)">
+                    <i class="fa-solid fa-ban"></i> Test 3.5km (Out of range)
+                </button>
+                <button type="button" class="btn-simulate" onclick="SafeYatraSOSBroadcast.toggleDND()"
+                    title="Quick toggle DND">
+                    <i class="fa-solid fa-moon"></i> Toggle DND
+                </button>
             </div>
         </div>
 
@@ -125,6 +170,13 @@
 
         <div class="toolkit-grid">
 
+            <div id="sirenToggleBtn" class="toolkit-card" title="Click to Enable or Disable Emergency Siren Alarm">
+                <div class="toolkit-icon red">
+                    <i class="fa-solid fa-bullhorn"></i>
+                </div>
+                <span id="sirenStatusText">Emergency Siren</span>
+            </div>
+
             <div id="shareLocBtn" class="toolkit-card">
                 <div class="toolkit-icon blue">
                     <i class="fa-solid fa-share-nodes"></i>
@@ -137,6 +189,13 @@
                     <i class="fa-solid fa-id-card"></i>
                 </div>
                 <span>Medical ID</span>
+            </div>
+
+            <div id="fakeCallBtn" class="toolkit-card">
+                <div class="toolkit-icon purple">
+                    <i class="fa-solid fa-phone-volume"></i>
+                </div>
+                <span>Fake Call</span>
             </div>
         </div>
 
@@ -271,6 +330,7 @@
 <!-- SafeYatra / TravelSathi Scripts -->
 <script src="../../backend/firebase-config.js"></script>
 <script src="../../backend/db.js"></script>
+<script src="../../backend/sos-broadcast.js"></script>
 <script src="../../backend/sos.js"></script>
 <script src="../../backend/page-transitions.js"></script>
 
