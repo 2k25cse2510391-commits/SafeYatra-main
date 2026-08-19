@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const infoCountTag = document.getElementById('infoCountTag');
     const safetyScoreNum = document.getElementById('safetyScoreNum');
     const safetyScoreTag = document.getElementById('safetyScoreTag');
+    const confidenceValue = document.getElementById('confidenceValue');
     const donutProgressRing = document.getElementById('donutProgressRing');
 
     // Modal DOM References
@@ -60,6 +61,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
         await initLocationAndWeather(currentLat, currentLng);
     }
+
+    window.addEventListener('storage', (event) => {
+        if (event.key !== SafeYatraSafetyAnalysis.storageKey || !event.newValue) return;
+        try {
+            updateSafetyCardStats(JSON.parse(event.newValue));
+        } catch (error) {
+            console.warn('Unable to read updated safety analysis:', error);
+        }
+    });
 
     // 2. Fetch Reverse Geocode & Live Weather
     async function initLocationAndWeather(lat, lng) {
@@ -99,6 +109,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Generate dynamic location-based alerts
         alertsData = generateLocationAlerts(currentCity, currentState, liveTemp, weatherCond, weatherCode, lat, lng);
+        
+        // Use the Home page's latest analysis when it matches this location.
+        const analysis = SafeYatraSafetyAnalysis.getLatestForLocation(currentLat, currentLng)
+            || SafeYatraSafetyAnalysis.analyze(liveTemp, weatherCode, currentLat, currentLng);
+
+        // Update safety stats score donut ring, confidence, and badges
+        updateSafetyCardStats(analysis);
 
         // Update safety stats score donut ring & badges
         updateSafetyCardStats(liveTemp, weatherCode);
@@ -240,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // 4. Dynamic Safety Card Stats Computation
-    function updateSafetyCardStats(temp, weatherCode) {
+    function updateSafetyCardStats(analysis) {
         let critical = 0;
         let warnings = 0;
         let info = 0;
@@ -255,15 +272,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (warningCountTag) warningCountTag.textContent = `${warnings} Warnings`;
         if (infoCountTag) infoCountTag.textContent = `${info} Info`;
 
-        // Compute Safety Score (Base 90 - penalize for weather extremes and critical alerts)
-        let score = 90;
-        if (temp > 38) score -= 6;
-        if (weatherCode >= 80) score -= 10;
-        if (critical > 0) score -= (critical * 4);
-        score = Math.max(Math.min(score, 99), 65);
+        const score = analysis.overallScore;
 
-        if (safetyScoreNum) safetyScoreNum.textContent = score;
-
+        if (safetyScoreNum) safetyScoreNum.textContent = scor
+        // if (confidenceValue) confidenceValue.textContent = `${analysis.confidence}%`;
+        
         let scoreTagText = "VERY SAFE";
         if (score < 80) scoreTagText = "MODERATE";
         if (score < 70) scoreTagText = "CAUTION";

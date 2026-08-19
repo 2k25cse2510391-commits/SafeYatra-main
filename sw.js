@@ -33,6 +33,7 @@ const STATIC_ASSETS = [
     './frontend/css/privacy.css',
     './backend/firebase-config.js',
     './backend/db.js',
+    './backend/safety-analysis.js',
     './backend/index.js',
     './backend/weather.js',
     './backend/alerts.js',
