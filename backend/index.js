@@ -11,11 +11,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         const userProfile = await SafeYatraDB.getUserProfile();
         const userNameTitle = document.querySelector('.user-name-title');
         const displayTouristNameIndex = document.getElementById('displayTouristNameIndex');
+        const topProfileBtn = document.getElementById('topProfileBtn');
+
         if (userNameTitle && userProfile && userProfile.name) {
             userNameTitle.textContent = `Namaste, ${userProfile.name}!`;
         }
         if (displayTouristNameIndex && userProfile && userProfile.name) {
             displayTouristNameIndex.textContent = userProfile.name;
+        }
+        if (topProfileBtn && userProfile && userProfile.photoUrl && userProfile.photoUrl.trim()) {
+            topProfileBtn.innerHTML = `<img src="${userProfile.photoUrl}" alt="Avatar">`;
         }
     }
 

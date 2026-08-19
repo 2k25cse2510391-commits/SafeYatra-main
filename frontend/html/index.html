@@ -335,12 +335,13 @@
                 <!-- 1. Top Green Profile Header Card -->
                 <div class="profile-header-card">
                     <div class="profile-header-content">
-                        <div class="avatar-wrapper">
-                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
+                        <div class="avatar-wrapper" id="popupAvatarWrapper">
+                            <img id="popupAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
                                 alt="User Avatar" class="user-avatar-img">
-                            <div class="avatar-check-badge">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
+                            <button type="button" class="avatar-camera-btn" id="popupAvatarCameraBtn" title="Change Profile Photo" aria-label="Change Profile Photo">
+                                <i class="fa-solid fa-camera"></i>
+                            </button>
+                            <input type="file" id="popupAvatarInput" accept="image/*" style="display:none">
                         </div>
 
                         <div class="user-main-info">
@@ -469,6 +470,36 @@
             </div>
 
             <form id="profileForm" class="profile-form">
+                <!-- Profile Photo Editor Section -->
+                <div class="modal-photo-section">
+                    <label class="modal-section-label"><i class="fa-solid fa-camera-retro"></i> Profile Photo</label>
+                    <div class="modal-avatar-row">
+                        <div class="modal-avatar-preview-box">
+                            <img id="modalAvatarPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Avatar Preview" class="modal-avatar-preview-img">
+                            <label for="modalAvatarInput" class="avatar-preview-overlay" title="Upload New Photo">
+                                <i class="fa-solid fa-camera"></i>
+                            </label>
+                        </div>
+                        <div class="modal-avatar-controls">
+                            <input type="file" id="modalAvatarInput" accept="image/*" style="display:none">
+                            <label for="modalAvatarInput" class="btn-avatar-action upload-btn">
+                                <i class="fa-solid fa-arrow-up-from-bracket"></i> Upload Photo
+                            </label>
+                            <button type="button" class="btn-avatar-action remove-btn" id="btnRemoveModalPhoto" title="Reset to default avatar">
+                                <i class="fa-solid fa-trash-can"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Preset Travel Avatars -->
+                    <div class="preset-avatars-wrap">
+                        <span class="preset-label">Or choose a preset avatar:</span>
+                        <div class="preset-avatars-grid" id="presetAvatarsGrid">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Full Name</label>
                     <input type="text" id="inputName" placeholder="e.g. Arjun Sharma" required>

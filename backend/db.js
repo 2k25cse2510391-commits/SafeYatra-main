@@ -46,8 +46,85 @@ const SafeYatraDB = {
             bloodGroup: "O+",
             emergencyContact: "1234567890",
             email: "",
-            address: ""
+            address: "",
+            photoUrl: ""
         };
+    },
+
+    // Default Avatar Generator / Fallback
+    getDefaultAvatar: function (name) {
+        if (name && name.trim()) {
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(name.trim())}&background=15803d&color=ffffff&bold=true&size=256`;
+        }
+        return "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
+    },
+
+    // Get Avatar URL for profile
+    getAvatarUrl: function (profile) {
+        if (profile && profile.photoUrl && profile.photoUrl.trim()) {
+            return profile.photoUrl;
+        }
+        return this.getDefaultAvatar(profile ? profile.name : "");
+    },
+
+    // Client-side Image Compression into Base64 Data URL
+    compressImage: function (file, maxWidth = 360, maxHeight = 360, quality = 0.85) {
+        return new Promise((resolve, reject) => {
+            if (!file) {
+                return reject(new Error("No file provided"));
+            }
+
+            // Check if valid image type
+            if (!file.type.startsWith('image/')) {
+                return reject(new Error("Selected file is not an image"));
+            }
+
+            const reader = new FileReader();
+            reader.onload = (readerEvent) => {
+                const img = new Image();
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Center-crop or square-fit calculations for circular profile photos
+                    const minDim = Math.min(width, height);
+                    const startX = (width - minDim) / 2;
+                    const startY = (height - minDim) / 2;
+
+                    const canvas = document.createElement('canvas');
+                    const targetSize = Math.min(maxWidth, minDim);
+                    canvas.width = targetSize;
+                    canvas.height = targetSize;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+
+                    // Draw cropped square center
+                    ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, targetSize, targetSize);
+
+                    // Export as compressed JPEG
+                    try {
+                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(dataUrl);
+                    } catch (err) {
+                        // Fallback export
+                        resolve(readerEvent.target.result);
+                    }
+                };
+                img.onerror = () => reject(new Error("Failed to load image file"));
+                img.src = readerEvent.target.result;
+            };
+            reader.onerror = () => reject(new Error("Failed to read file"));
+            reader.readAsDataURL(file);
+        });
+    },
+
+    // Direct Photo Update Helper
+    updateProfilePhoto: async function (photoDataUrl) {
+        const currentProfile = await this.getUserProfile();
+        currentProfile.photoUrl = photoDataUrl || "";
+        return await this.saveUserProfile(currentProfile);
     },
 
     // 4. Check if User Document Exists in Firestore
